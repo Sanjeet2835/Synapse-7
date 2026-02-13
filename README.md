@@ -69,7 +69,7 @@ The classifier is built on a **ResNet-34** architecture pretrained on ImageNet, 
 
 * ImageNet (natural images)
 
-The system utilizes a custom `MultiGenDataset` class designed to aggregate training data from multiple diverse sources (e.g., Midjourney, DALL-E, Stable Diffusion) into a single unified stream. This ensures the model learns generalized artifacts rather than overfitting to a specific generator's style.
+The system utilizes a custom `MultiGenDataset` class designed to aggregate training data from multiple diverse sources into a single unified stream. This ensures the model learns generalized artifacts rather than overfitting to a specific generator's style.
 
 ### **A. Data Directory Structure**
 
@@ -159,9 +159,10 @@ The model was evaluated on a held-out validation set of **7,000 images** (20% sp
 | **Precision** | **98.1%** | **Low False Positive Rate.** When the model says "AI", it is highly likely to be true. It rarely flags real art as fake. |
 | **Recall** | **96.5%** | **High Detection Rate.** The model catches the vast majority of AI-generated content, missing very few. |
 
+
 ```markdown
 > 🔍 Detailed Analysis:
-> For full visualization reports—including Confusion Matrices, Calibration Curves, and Classification Reports —please consult the `results/` directory.
+> For all visualizations and reports, please consult the `results/` directory.
 ```
 
 ### **B. Generator-Specific Robustness Analysis**
@@ -170,25 +171,115 @@ To verify that the model captures generalized spectral artifacts rather than ove
 
 A primary objective of this analysis was to determine if the model **underfits on "harder" samples** from sophisticated generators like **Midjourney**. While simpler architectures (like BigGAN) leave blatant checkerboard patterns, newer Diffusion-based models produce more refined textures that can blend into the noise floor of real imagery. By evaluating per-generator metrics, we confirmed that while these samples represent a higher degree of difficulty, the Frequency Domain features maintain sufficient separability to prevent significant underfitting.
 
-| Generator Family | Architecture | Accuracy | Observation |
+| Generator Family | Specific Models | Accuracy | Observation |
 | --- | --- | --- | --- |
-| **Midjourney / SD v5** | Diffusion | **High** | Targeted specifically to check for underfitting; Frequency maps remained robust. |
-| **BigGAN / VQDM** | GAN | **High** | High-frequency artifacts were easily captured. |
-| **GLIDE / ADM** | Diffusion | **Moderate** | Smoother textures provided the toughest "hard samples" for the spectral head. |
-> (Detailed per-generator reports are available in the results/ directory)
+| **High-Fidelity Diffusion** | **Midjourney** | **95%** | **The Hardest Sample.** The drop in F1-score (0.94) indicates this model produces the cleanest frequency maps, yet Synapse-7 still maintains robust separability. |
+| **Standard Diffusion** | **SD v5, Wukong, GLIDE** | **97%** | Consistent performance. The Local FFT approach successfully captures the subtle artifacts in these widespread models. |
+| **GANs & Early Diffusion** | **BigGAN, VQDM, ADM** | **98%** | **Near Perfect.** These models exhibit distinct high-frequency checkerboard patterns that are trivial for the spectral backbone to detect. |
+
+Detailed per-generator reports:
+
+Generator: GLIDE
+```
+              precision    recall  f1-score   support
+
+           0       0.99      0.94      0.97       500
+           1       0.94      0.99      0.97       500
+
+    accuracy                           0.97      1000
+   macro avg       0.97      0.97      0.97      1000
+weighted avg       0.97      0.97      0.97      1000
+```
+
+Generator: ADM (Diffusion Model)
+```
+              precision    recall  f1-score   support
+
+           0       0.99      0.97      0.98       500
+           1       0.97      0.99      0.98       500
+
+    accuracy                           0.98      1000
+   macro avg       0.98      0.98      0.98      1000
+weighted avg       0.98      0.98      0.98      1000
+```
+
+Generator: Stable Diffusion v5
+```
+              precision    recall  f1-score   support
+
+           0       0.99      0.96      0.97       500
+           1       0.96      0.99      0.98       500
+
+    accuracy                           0.97      1000
+   macro avg       0.98      0.97      0.97      1000
+weighted avg       0.98      0.97      0.97      1000
+```
+
+Generator: Midjourney
+```
+              precision    recall  f1-score   support
+
+           0       0.92      0.97      0.95       500
+           1       0.97      0.92      0.94       500
+
+    accuracy                           0.95      1000
+   macro avg       0.95      0.95      0.95      1000
+weighted avg       0.95      0.95      0.95      1000
+```
+
+Generator: Wukong
+```
+              precision    recall  f1-score   support
+
+           0       0.96      0.97      0.97       500
+           1       0.97      0.96      0.97       500
+
+    accuracy                           0.97      1000
+   macro avg       0.97      0.97      0.97      1000
+weighted avg       0.97      0.97      0.97      1000
+```
+
+Generator: BigGAN
+```
+              precision    recall  f1-score   support
+
+           0       1.00      0.97      0.98       500
+           1       0.97      1.00      0.98       500
+
+    accuracy                           0.98      1000
+   macro avg       0.98      0.98      0.98      1000
+weighted avg       0.98      0.98      0.98      1000
+```
+
+Generator: VQ-Diffusion (VQDM)
+```
+              precision    recall  f1-score   support
+
+           0       0.99      0.96      0.98       500
+           1       0.96      0.99      0.98       500
+
+    accuracy                           0.98      1000
+   macro avg       0.98      0.98      0.98      1000
+weighted avg       0.98      0.98      0.98      1000
+```
 
 ### **B. Diagnostic Plots**
 
 To verify reliability beyond simple accuracy, two key visualizations are generated during inference:
 
 1. **Confusion Matrix:**
+   
+   <img width="500" height="400" alt="confusion_matrix (2)" src="https://github.com/user-attachments/assets/4472cbde-628d-4ab2-92ea-da7c4fab1c26" />
+
 * Visualizes the exact count of *False Positives* (Real flagged as AI) vs. *False Negatives* (AI flagged as Real).
 * *Result:* The model shows a slight bias towards Precision, which is preferred in detection systems to avoid accusing human artists falsely.
+  
 
 
 2. **Calibration Curve (Reliability Diagram):**
-* Plots *Predicted Confidence* vs. *True Probability*.
-* *Result:* The curve follows the diagonal , indicating the model's confidence score (e.g., "80% sure this is AI") actually corresponds to an 80% real-world probability.
+
+    <img width="800" height="600" alt="calibration_curve (2)" src="https://github.com/user-attachments/assets/dbccda10-cb1e-40d7-9d29-3ceb9f2db251" />
+
 
 
 ### **C. Model Artifacts**
@@ -224,7 +315,7 @@ While Synapse-7 achieves high accuracy on the validation set, the current implem
 
 
 
-### **C. Future Scope**
+### **B. Future Scope**
 
 1. **Scale-Up:**
 * Train on the full **GenImage** dataset using multi-GPU distributed training (DDP) to validate performance at scale.
@@ -232,6 +323,7 @@ While Synapse-7 achieves high accuracy on the validation set, the current implem
 
 2. **Advanced Architectures:**
 * Experiment with **Swin Transformers** or **ConvNeXt**, which may capture global frequency dependencies better than standard CNNs.
+
 
 
 
