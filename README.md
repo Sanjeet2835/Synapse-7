@@ -1,4 +1,4 @@
-Synapse-7: AI-Generated Image Detection using Frequency Domain Analysis
+# Synapse-7: AI-Generated Image Detection using Frequency Domain Analysis
 
 # 1. Project Abstract
 
@@ -188,6 +188,7 @@ While Synapse-7 achieves high accuracy on the validation set, the current implem
 
 2. **Advanced Architectures:**
 * Experiment with **Swin Transformers** or **ConvNeXt**, which may capture global frequency dependencies better than standard CNNs.
+
 
 
 
