@@ -1,5 +1,5 @@
 Generator: GLIDE
-```
+
               precision    recall  f1-score   support
 
            0       0.99      0.94      0.97       500
@@ -8,10 +8,10 @@ Generator: GLIDE
     accuracy                           0.97      1000
    macro avg       0.97      0.97      0.97      1000
 weighted avg       0.97      0.97      0.97      1000
-```
+
 
 Generator: ADM (Diffusion Model)
-```
+
               precision    recall  f1-score   support
 
            0       0.99      0.97      0.98       500
@@ -20,10 +20,10 @@ Generator: ADM (Diffusion Model)
     accuracy                           0.98      1000
    macro avg       0.98      0.98      0.98      1000
 weighted avg       0.98      0.98      0.98      1000
-```
+
 
 Generator: Stable Diffusion v5
-```
+
               precision    recall  f1-score   support
 
            0       0.99      0.96      0.97       500
@@ -32,10 +32,10 @@ Generator: Stable Diffusion v5
     accuracy                           0.97      1000
    macro avg       0.98      0.97      0.97      1000
 weighted avg       0.98      0.97      0.97      1000
-```
+
 
 Generator: Midjourney
-```
+
               precision    recall  f1-score   support
 
            0       0.92      0.97      0.95       500
@@ -44,11 +44,11 @@ Generator: Midjourney
     accuracy                           0.95      1000
    macro avg       0.95      0.95      0.95      1000
 weighted avg       0.95      0.95      0.95      1000
-```
+
 
 Generator: Wukong
-```
-              precision    recall  f1-score   support
+
+        precision    recall  f1-score   support
 
            0       0.96      0.97      0.97       500
            1       0.97      0.96      0.97       500
@@ -56,10 +56,10 @@ Generator: Wukong
     accuracy                           0.97      1000
    macro avg       0.97      0.97      0.97      1000
 weighted avg       0.97      0.97      0.97      1000
-```
+
 
 Generator: BigGAN
-```
+
               precision    recall  f1-score   support
 
            0       1.00      0.97      0.98       500
@@ -68,10 +68,9 @@ Generator: BigGAN
     accuracy                           0.98      1000
    macro avg       0.98      0.98      0.98      1000
 weighted avg       0.98      0.98      0.98      1000
-```
 
 Generator: VQ-Diffusion (VQDM)
-```
+
               precision    recall  f1-score   support
 
            0       0.99      0.96      0.98       500
@@ -80,4 +79,4 @@ Generator: VQ-Diffusion (VQDM)
     accuracy                           0.98      1000
    macro avg       0.98      0.98      0.98      1000
 weighted avg       0.98      0.98      0.98      1000
-```
+
