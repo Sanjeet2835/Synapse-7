@@ -55,6 +55,20 @@ The classifier is built on a **ResNet-34** architecture pretrained on ImageNet, 
 
 # 3. Dataset & Pipeline
 
+**AI Image Generators:**
+
+* Wukong
+* GLIDE
+* BigGAN
+* VQ-Diffusion (VQDM)
+* Midjourney
+* Stable Diffusion v5
+* ADM (Diffusion Model)
+
+**Real Images:**
+
+* ImageNet (natural images)
+
 The system utilizes a custom `MultiGenDataset` class designed to aggregate training data from multiple diverse sources (e.g., Midjourney, DALL-E, Stable Diffusion) into a single unified stream. This ensures the model learns generalized artifacts rather than overfitting to a specific generator's style.
 
 ### **A. Data Directory Structure**
@@ -218,6 +232,7 @@ While Synapse-7 achieves high accuracy on the validation set, the current implem
 
 2. **Advanced Architectures:**
 * Experiment with **Swin Transformers** or **ConvNeXt**, which may capture global frequency dependencies better than standard CNNs.
+
 
 
 
