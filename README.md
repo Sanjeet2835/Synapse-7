@@ -150,6 +150,19 @@ The model was evaluated on a held-out validation set of **7,000 images** (20% sp
 > For full visualization reports—including high-res **Confusion Matrices**, **Calibration Curves**, and **Classification Reports**—please consult the `results/` directory.
 ```
 
+### **B. Generator-Specific Robustness Analysis**
+
+To verify that the model captures generalized spectral artifacts rather than overfitting to source-specific styles, we conducted a granular "stress test" across individual generator subsets.
+
+A primary objective of this analysis was to determine if the model **underfits on "harder" samples** from sophisticated generators like **Midjourney**. While simpler architectures (like BigGAN) leave blatant checkerboard patterns, newer Diffusion-based models produce more refined textures that can blend into the noise floor of real imagery. By evaluating per-generator metrics, we confirmed that while these samples represent a higher degree of difficulty, the Frequency Domain features maintain sufficient separability to prevent significant underfitting.
+
+| Generator Family | Architecture | Accuracy | Observation |
+| --- | --- | --- | --- |
+| **Midjourney / SD v5** | Diffusion | **High** | Targeted specifically to check for underfitting; Frequency maps remained robust. |
+| **BigGAN / VQDM** | GAN | **High** | High-frequency artifacts were easily captured. |
+| **GLIDE / ADM** | Diffusion | **Moderate** | Smoother textures provided the toughest "hard samples" for the spectral head. |
+> (Detailed per-generator reports are available in the results/ directory)
+
 ### **B. Diagnostic Plots**
 
 To verify reliability beyond simple accuracy, two key visualizations are generated during inference:
@@ -168,7 +181,6 @@ To verify reliability beyond simple accuracy, two key visualizations are generat
 
 * **Best Checkpoint:** Saved as `resnet34_localfft_v1.pth` (PyTorch state dictionary).
 * **Tracking:** All metrics, hyperparameters, and artifacts are logged to **MLFlow** for experiment versioning.
-
 
 
 # 6. Limitations & Future Work
@@ -190,7 +202,7 @@ While Synapse-7 achieves high accuracy on the validation set, the current implem
 * Due to hardware limitations, extensive **Neural Architecture Search (NAS)** and automated hyperparameter tuning (e.g., Optuna sweeps) were not performed. The current configuration relies on heuristic best practices (e.g., standard AdamW defaults) rather than empirically optimized values.
 
 
-#### **B. Legacy Generator Bias (Temporal Domain Shift)**
+4. **. Legacy Generator Bias (Temporal Domain Shift)**
 
 * **The Issue:** The training dataset is derived from older, "legacy" generative architectures (e.g., **BigGAN**, **GLIDE**, **Midjourney v4**, and **Stable Diffusion v1.5/v2**).
 * **The Consequence:** These earlier models left distinct spectral fingerprints (e.g., strong checkerboard artifacts from older upsampling layers) that Synapse-7 has learned to target.
@@ -206,6 +218,7 @@ While Synapse-7 achieves high accuracy on the validation set, the current implem
 
 2. **Advanced Architectures:**
 * Experiment with **Swin Transformers** or **ConvNeXt**, which may capture global frequency dependencies better than standard CNNs.
+
 
 
 
