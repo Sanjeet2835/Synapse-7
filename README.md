@@ -13,6 +13,17 @@ By transforming input images into frequency maps using **Local Patch-wise Fast F
 * **Architecture:** ResNet-34 backbone with frozen early layers to preserve low-level feature extraction, fine-tuned on spectral data.
 * **Tech Stack:** PyTorch Lightning, MLFlow (Experiment Tracking), and Custom FFT Preprocessing.
 
+## 📂 Repository Structure
+
+```text
+Synapse-7/
+├── dataset/           # 🔗 Link to the "Tiny GenImage" dataset used for training
+├── model/             # 🔗 Link to download trained model weights (best-model.ckpt)
+├── notebook/          # 📓 Synapse-7.ipynb (Main training & evaluation logic)
+├── results/           # 📊 Performance Reports and Graphs (Confusion Matrix, Reports, Graphs)
+└── README.md          # 📄 Project documentation
+```
+
 
 # 2. System Architecture
 
@@ -134,6 +145,11 @@ The model was evaluated on a held-out validation set of **7,000 images** (20% sp
 | **Precision** | **98.1%** | **Low False Positive Rate.** When the model says "AI", it is highly likely to be true. It rarely flags real art as fake. |
 | **Recall** | **96.5%** | **High Detection Rate.** The model catches the vast majority of AI-generated content, missing very few. |
 
+```markdown
+> **🔍 Detailed Analysis:**
+> For full visualization reports—including high-res **Confusion Matrices**, **Calibration Curves**, and **Classification Reports**—please consult the [`results/`](./results) directory.
+```
+
 ### **B. Diagnostic Plots**
 
 To verify reliability beyond simple accuracy, two key visualizations are generated during inference:
@@ -174,8 +190,15 @@ While Synapse-7 achieves high accuracy on the validation set, the current implem
 * Due to hardware limitations, extensive **Neural Architecture Search (NAS)** and automated hyperparameter tuning (e.g., Optuna sweeps) were not performed. The current configuration relies on heuristic best practices (e.g., standard AdamW defaults) rather than empirically optimized values.
 
 
+#### **B. Legacy Generator Bias (Temporal Domain Shift)**
 
-### **B. Future Scope**
+* **The Issue:** The training dataset is derived from older, "legacy" generative architectures (e.g., **BigGAN**, **GLIDE**, **Midjourney v4**, and **Stable Diffusion v1.5/v2**).
+* **The Consequence:** These earlier models left distinct spectral fingerprints (e.g., strong checkerboard artifacts from older upsampling layers) that Synapse-7 has learned to target.
+* **The Risk:** The model may experience performance degradation when inference is run on **state-of-the-art (SOTA)** generators like **Flux.1**, **Midjourney v6**, or **DALL-E 3**. Newer architectures use advanced sampling schedulers and transformer backbones that produce "cleaner" frequency maps, potentially evading detection (False Negatives).
+
+
+
+### **C. Future Scope**
 
 1. **Scale-Up:**
 * Train on the full **GenImage** dataset using multi-GPU distributed training (DDP) to validate performance at scale.
@@ -183,6 +206,7 @@ While Synapse-7 achieves high accuracy on the validation set, the current implem
 
 2. **Advanced Architectures:**
 * Experiment with **Swin Transformers** or **ConvNeXt**, which may capture global frequency dependencies better than standard CNNs.
+
 
 
 
