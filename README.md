@@ -279,7 +279,7 @@ To verify reliability beyond simple accuracy, two key visualizations are generat
 2. **Calibration Curve (Reliability Diagram):**
 
     <img width="800" height="600" alt="calibration_curve (2)" src="https://github.com/user-attachments/assets/dbccda10-cb1e-40d7-9d29-3ceb9f2db251" />
-
+Note: Model calibration has not been performed yet.
 
 
 ### **C. Model Artifacts**
@@ -323,6 +323,7 @@ While Synapse-7 achieves high accuracy on the validation set, the current implem
 
 2. **Advanced Architectures:**
 * Experiment with **Swin Transformers** or **ConvNeXt**, which may capture global frequency dependencies better than standard CNNs.
+
 
 
 
